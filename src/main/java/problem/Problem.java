@@ -30,12 +30,14 @@ public class Problem {
      * список точек
      */
     private ArrayList<Point> points;
+    private ArrayList<Beam> beams;
 
     /**
      * Конструктор класса задачи
      */
     public Problem() {
         points = new ArrayList<>();
+        beams = new ArrayList<>();
     }
 
     /**
@@ -113,8 +115,8 @@ public class Problem {
      */
     public void addRandomPoints(int n) {
         for (int i = 0; i < n; i++) {
-            Point p = Point.getRandomPoint();
-            points.add(p);
+            Beam p = Beam.getRandomBeam();
+            beams.add(p);
         }
     }
 
@@ -122,7 +124,7 @@ public class Problem {
      * Очистить задачу
      */
     public void clear() {
-        points.clear();
+        beams.clear();
     }
 
     /**
@@ -131,12 +133,9 @@ public class Problem {
      * @param gl переменная OpenGL для рисования
      */
     public void render(GL2 gl) {
-       // for (Point point : points) {
-       //     point.render(gl);
-       // }
-        Figures.renderPoint(gl,new Vector2(0.1,0.2) ,3);
-        Figures.renderLine(gl,new Vector2(0.1,0.2),new Vector2(0.3,0.6),3 );
-        Figures.renderTriangle(gl,new Vector2(0.1,0.2),new Vector2(0.3,0.6),new Vector2(0.5,0.9),false );
-        Figures.renderQuad(gl,new Vector2(0.1,0.2),new Vector2(0.2,0.2),new Vector2(0.2,0.1),new Vector2(0.1,0.1),true );
+        for (Beam beam : beams) {
+            beam.render(gl);
+        }
+
     }
 }
