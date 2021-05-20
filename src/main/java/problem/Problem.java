@@ -29,64 +29,178 @@ public class Problem {
     /**
      * список точек
      */
-    private ArrayList<Point> points;
-    private ArrayList<Beam> beams;
+    private ArrayList<Beam> rectangles;
 
     /**
      * Конструктор класса задачи
      */
     public Problem() {
-        points = new ArrayList<>();
-        beams = new ArrayList<>();
+        rectangles = new ArrayList<>();
     }
 
     /**
      * Добавить точку
      *
-     * @param x      координата X точки
-     * @param y      координата Y точки
+     * @param x координата X точки
+     * @param y координата Y точки
+
      * @param setVal номер множества
      */
     public void addPoint(double x, double y, int setVal) {
-        Point point = new Point(x, y, setVal);
-        points.add(point);
+// Rectangle point = new Point(x, y, setVal);
+// rectangles.add(point);
     }
 
     /**
      * Решить задачу
      */
+    Vector2 Area[] = new Vector2[7];
+    Vector2 m = new Vector2(0,0);
+    Beam Rect1 = new Beam(m, m, m, m);
+    Beam Rect2 = new Beam(m, m, m, m);
+    Vector2 middle = new Vector2(0,0);
+    int length = 0;
+
     public void solve() {
-        // перебираем пары точек
-        for (Point p : points) {
-            for (Point p2 : points) {
-                // если точки являются разными
-                if (p != p2) {
-                    // если координаты у них совпадают
-                    if (Math.abs(p.x - p2.x) < 0.0001 && Math.abs(p.y - p2.y) < 0.0001) {
-                        p.isSolution = true;
-                        p2.isSolution = true;
+        int g1 = 0;
+        int g2 = 0;
+        double maxS = 0;
+// перебираем пары прямоугольников
+        for (Beam r1 : rectangles) {
+            g1++;
+            g2 = 0;
+            for (Beam r2 : rectangles) {
+                g2++;
+                if ((g1 != g2) && (Vector2.rast(r1.A, r1.B) >= 0.001) && (Vector2.rast(r2.A, r2.D) >= 0.001) && (Vector2.rast(r1.A, r1.D) >= 0.001) && (Vector2.rast(r2.A, r2.B) >= 0.001) &&
+                        !(((r2.B.y - r2.A.y)*(r1.B.x - r1.A.x) == (r1.B.y - r1.A.y)*(r2.B.x - r2.A.x)) && (((r1.C.x == 1000) && (r2.C.x == 1000)) || ((r1.C.x == -1000) && (r2.C.x == -1000))))) {
+                    Vector2 p1 = Vector2.interectonPoint(r1.A, r1.B, r2.A, r2.B);
+                    Vector2 p2 = Vector2.interectonPoint(r1.B, r1.C, r2.A, r2.B);
+                    Vector2 p3 = Vector2.interectonPoint(r1.C, r1.D, r2.A, r2.B);
+                    Vector2 p4 = Vector2.interectonPoint(r1.A, r1.D, r2.A, r2.B);
+                    Vector2 p5 = Vector2.interectonPoint(r1.A, r1.B, r2.B, r2.C);
+                    Vector2 p6 = Vector2.interectonPoint(r1.B, r1.C, r2.B, r2.C);
+                    Vector2 p7 = Vector2.interectonPoint(r1.C, r1.D, r2.B, r2.C);
+                    Vector2 p8 = Vector2.interectonPoint(r1.A, r1.D, r2.B, r2.C);
+                    Vector2 p9 = Vector2.interectonPoint(r1.A, r1.B, r2.C, r2.D);
+                    Vector2 p10 = Vector2.interectonPoint(r1.B, r1.C, r2.C, r2.D);
+                    Vector2 p11 = Vector2.interectonPoint(r1.C, r1.D, r2.C, r2.D);
+                    Vector2 p12 = Vector2.interectonPoint(r1.A, r1.D, r2.C, r2.D);
+                    Vector2 p13 = Vector2.interectonPoint(r1.A, r1.B, r2.A, r2.D);
+                    Vector2 p14 = Vector2.interectonPoint(r1.B, r1.C, r2.A, r2.D);
+                    Vector2 p15 = Vector2.interectonPoint(r1.C, r1.D, r2.A, r2.D);
+                    Vector2 p16 = Vector2.interectonPoint(r1.A, r1.D, r2.A, r2.D);
+                    Vector2 p17 = Beam.insidePoint(r1.A, r2);
+                    Vector2 p18 = Beam.insidePoint(r1.B, r2);
+                    Vector2 p19 = Beam.insidePoint(r1.C, r2);
+                    Vector2 p20 = Beam.insidePoint(r1.D, r2);
+                    Vector2 p21 = Beam.insidePoint(r2.A, r1);
+                    Vector2 p22 = Beam.insidePoint(r2.B, r1);
+                    Vector2 p23 = Beam.insidePoint(r2.C, r1);
+                    Vector2 p24 = Beam.insidePoint(r2.D, r1);
+
+                    Vector2[] points = new Vector2[]{p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24};
+
+
+                    Vector2 polygon[] = new Vector2[]{null, null, null, null, null, null, null, null};
+                    int l1 = 0;
+                    for (int i = 0; i < 24; i++) {
+                        System.out.println(points[i]);
+                        if (points[i] != null) {
+                            polygon[l1] = points[i];
+                            l1++;
+                        }
+                    }
+                    if (l1 <= 2) {
+                        polygon[0] = null;
+                        polygon[1] = null;
+                    }
+                    double sumx = 0;
+                    double sumy = 0;
+                    int sumxy = 0;
+                    for (int i = 0; i <= 6; i++) {
+                        if (polygon[i] != null) {
+                            sumx = sumx + polygon[i].x;
+                            sumy = sumy + polygon[i].y;
+                            sumxy++;
+                        }
+                    }
+                    Vector2 sr = new Vector2();
+                    sr.x = sumx / sumxy;
+                    sr.y = sumy / sumxy;
+                    Vector2 min = new Vector2(0,0);
+                    double minangle = Math.PI;
+                    int min_i = 0;
+                    for (int i = 0; i < sumxy; i++) {
+                        minangle = Vector2.angleOX(sr, polygon[i]);
+                        min_i = i;
+                        for (int j = i + 1; j < sumxy; j++)
+                            if (Vector2.angleOX(sr, polygon[j]) < minangle) {
+                                minangle = Vector2.angleOX(sr, polygon[j]);
+                                min_i = j;
+                            }
+                        if (min_i != i) {
+                            Vector2 tm = new Vector2(polygon[i].x, polygon[i].y);
+                            polygon[i].x = polygon[min_i].x;
+                            polygon[i].y = polygon[min_i].y;
+                            polygon[min_i] = tm;
+                        }
+                    }
+                    double S1 = 0;
+                    for (int i = 0; i < sumxy - 1; i++) {
+                        S1 = S1 + Vector2.triangleArea(sr, polygon[i], polygon[i + 1]);
+                    }
+                    double S = 0;
+                    if (sumxy != 0) S = S1 + Vector2.triangleArea(sr, polygon[sumxy - 1], polygon[0]);
+                    if (g1 == g2) S = 0;
+                    if (S > maxS) {
+                        maxS = S;
+                        length = sumxy;
+                        middle.x = sr.x;
+                        middle.y = sr.y;
+                        Rect1 = r1;
+                        Rect2 = r2;
+                        for (int i = 0; i < sumxy; i++) {
+                            Area[i] = polygon[i];
+                        }
                     }
                 }
             }
+
         }
+
+
+
+
     }
+
 
     /**
      * Загрузить задачу из файла
      */
     public void loadFromFile() {
-        points.clear();
+        rectangles.clear();
         try {
             File file = new File(FILE_NAME);
             Scanner sc = new Scanner(file);
-            // пока в файле есть непрочитанные строки
+
+
+// пока в файле есть непрочитанные строки
             while (sc.hasNextLine()) {
-                double x = sc.nextDouble();
-                double y = sc.nextDouble();
-                int setVal = sc.nextInt();
+                double x1 = sc.nextDouble();
+                double y1 = sc.nextDouble();
+                double x2 = sc.nextDouble();
+                double y2 = sc.nextDouble();
+                double x3 = sc.nextDouble();
+                double y3 = sc.nextDouble();
+                double x4 = sc.nextDouble();
+                double y4 = sc.nextDouble();
+                Vector2 A = new Vector2(x1, y1);
+                Vector2 B = new Vector2(x2, y2);
+                Vector2 C = new Vector2(x3, y3);
+                Vector2 D = new Vector2(x4, y4);
                 sc.nextLine();
-                Point point = new Point(x, y, setVal);
-                points.add(point);
+                Beam rect = new Beam(A, B, C, D);
+                rectangles.add(rect);
             }
         } catch (Exception ex) {
             System.out.println("Ошибка чтения из файла: " + ex);
@@ -99,8 +213,8 @@ public class Problem {
     public void saveToFile() {
         try {
             PrintWriter out = new PrintWriter(new FileWriter(FILE_NAME));
-            for (Point point : points) {
-                out.printf("%.2f %.2f %d\n", point.x, point.y, point.setNumber);
+            for (Beam rect : rectangles) {
+                out.printf("%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rect.A.x, rect.A.y, rect.B.x, rect.B.y, rect.C.x, rect.C.y, rect.D.x, rect.D.y);
             }
             out.close();
         } catch (IOException ex) {
@@ -113,10 +227,10 @@ public class Problem {
      *
      * @param n кол-во точек
      */
-    public void addRandomPoints(int n) {
+    public void addRandomRectangles(int n) {
+        rectangles.clear();
         for (int i = 0; i < n; i++) {
-            Beam p = Beam.getRandomBeam();
-            beams.add(p);
+            rectangles.add(Beam.randomRectangle());
         }
     }
 
@@ -124,7 +238,8 @@ public class Problem {
      * Очистить задачу
      */
     public void clear() {
-        beams.clear();
+        rectangles.clear();
+        length = 0;
     }
 
     /**
@@ -132,9 +247,22 @@ public class Problem {
      *
      * @param gl переменная OpenGL для рисования
      */
+
     public void render(GL2 gl) {
-        for (Beam beam : beams) {
-            beam.render(gl);
+
+        for (Beam point : rectangles) {
+            point.render(gl);
+        }
+        if (length >= 3) {
+
+            for (int i = 0; i < length - 1; i++) {
+                Figures.renderTriangle(gl, middle, Area[i], Area[i + 1], true);
+            }
+            Figures.renderTriangle(gl, middle, Area[0], Area[length - 1], true);
+            gl.glColor3f(1, 0, 0);
+            Rect1.render(gl);
+            Rect2.render(gl);
+            gl.glColor3f(1, 1, 1);
         }
 
     }

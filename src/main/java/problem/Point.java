@@ -52,13 +52,7 @@ public class Point {
      *
      * @return случайная точка
      */
-    static Point getRandomPoint() {
-        Random r = new Random();
-        double nx = (double) r.nextInt(50) / 25 - 1;
-        double ny = (double) r.nextInt(50) / 25 - 1;
-        int nSetVal = r.nextInt(2);
-        return new Point(nx, ny, nSetVal);
-    }
+
 
     /**
      * Рисование точки
@@ -83,6 +77,8 @@ public class Point {
         gl.glEnd();
         gl.glPointSize(1);
     }
+
+
 
     /**
      * Получить строковое представление точки
