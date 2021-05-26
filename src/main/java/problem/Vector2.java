@@ -1,9 +1,6 @@
 package problem;
 
-import javax.media.opengl.GL2;
-
-class
-Vector2 {
+class Vector2 {
     public double x;
     public double y;
     public Vector2() {

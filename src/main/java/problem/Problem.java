@@ -1,7 +1,10 @@
 package problem;
 
 import javax.media.opengl.GL2;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -19,7 +22,7 @@ public class Problem {
     /**
      * заголовок окна
      */
-    public static final String PROBLEM_CAPTION = "Итоговый проект ученика 10-7 Иванова Ивана";
+    public static final String PROBLEM_CAPTION = "Итоговый проект ученика 10-1  Сарахатунова Дениса";
 
     /**
      * путь к файлу
@@ -29,13 +32,13 @@ public class Problem {
     /**
      * список точек
      */
-    private ArrayList<Beam> rectangles;
+    private ArrayList<Beam> beams;
 
     /**
      * Конструктор класса задачи
      */
     public Problem() {
-        rectangles = new ArrayList<>();
+        beams = new ArrayList<>();
     }
 
     /**
@@ -66,13 +69,14 @@ public class Problem {
         int g2 = 0;
         double maxS = 0;
 // перебираем пары прямоугольников
-        for (Beam r1 : rectangles) {
+        for (Beam r1 : beams) {
             g1++;
             g2 = 0;
-            for (Beam r2 : rectangles) {
+            for (Beam r2 : beams) {
                 g2++;
-                if ((g1 != g2) && (Vector2.rast(r1.A, r1.B) >= 0.001) && (Vector2.rast(r2.A, r2.D) >= 0.001) && (Vector2.rast(r1.A, r1.D) >= 0.001) && (Vector2.rast(r2.A, r2.B) >= 0.001) &&
-                        !(((r2.B.y - r2.A.y)*(r1.B.x - r1.A.x) == (r1.B.y - r1.A.y)*(r2.B.x - r2.A.x)) && (((r1.C.x == 1000) && (r2.C.x == 1000)) || ((r1.C.x == -1000) && (r2.C.x == -1000))))) {
+                if ((g1 != g2) && (Vector2.rast(r1.A, r1.B) >= 0.001) && (Vector2.rast(r2.A, r2.D) >= 0.001)
+                        && (Vector2.rast(r1.A, r1.D) >= 0.001) && (Vector2.rast(r2.A, r2.B) >= 0.001) &&
+                        !(((r1.A.x - r1.B.x)*(r2.A.y - r2.B.y) == (r2.A.x - r2.B.x)*(r1.A.y - r1.B.y)) && (((r1.C.x > 0) && (r2.C.x > 0))|| ((r1.C.x < 0) && (r2.C.x < 0))) ) ) {
                     Vector2 p1 = Vector2.interectonPoint(r1.A, r1.B, r2.A, r2.B);
                     Vector2 p2 = Vector2.interectonPoint(r1.B, r1.C, r2.A, r2.B);
                     Vector2 p3 = Vector2.interectonPoint(r1.C, r1.D, r2.A, r2.B);
@@ -172,13 +176,23 @@ public class Problem {
 
 
     }
+// если точки являются разными
+// if (p != p2) {
+// // если координаты у них совпадают
+// if (Math.abs(p.x - p2.x) < 0.0001 && Math.abs(p.y - p2.y) < 0.0001) {
+// p.isSolution = true;
+// p2.isSolution = true;
+// }
+// }
+// }
+// }
 
 
     /**
      * Загрузить задачу из файла
      */
     public void loadFromFile() {
-        rectangles.clear();
+        beams.clear();
         try {
             File file = new File(FILE_NAME);
             Scanner sc = new Scanner(file);
@@ -200,7 +214,7 @@ public class Problem {
                 Vector2 D = new Vector2(x4, y4);
                 sc.nextLine();
                 Beam rect = new Beam(A, B, C, D);
-                rectangles.add(rect);
+                beams.add(rect);
             }
         } catch (Exception ex) {
             System.out.println("Ошибка чтения из файла: " + ex);
@@ -213,7 +227,7 @@ public class Problem {
     public void saveToFile() {
         try {
             PrintWriter out = new PrintWriter(new FileWriter(FILE_NAME));
-            for (Beam rect : rectangles) {
+            for (Beam rect : beams) {
                 out.printf("%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rect.A.x, rect.A.y, rect.B.x, rect.B.y, rect.C.x, rect.C.y, rect.D.x, rect.D.y);
             }
             out.close();
@@ -228,9 +242,9 @@ public class Problem {
      * @param n кол-во точек
      */
     public void addRandomRectangles(int n) {
-        rectangles.clear();
+        beams.clear();
         for (int i = 0; i < n; i++) {
-            rectangles.add(Beam.randomRectangle());
+            beams.add(Beam.randomBeam());
         }
     }
 
@@ -238,7 +252,7 @@ public class Problem {
      * Очистить задачу
      */
     public void clear() {
-        rectangles.clear();
+        beams.clear();
         length = 0;
     }
 
@@ -250,7 +264,7 @@ public class Problem {
 
     public void render(GL2 gl) {
 
-        for (Beam point : rectangles) {
+        for (Beam point : beams) {
             point.render(gl);
         }
         if (length >= 3) {
@@ -264,6 +278,5 @@ public class Problem {
             Rect2.render(gl);
             gl.glColor3f(1, 1, 1);
         }
-
     }
 }

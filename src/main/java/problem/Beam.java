@@ -3,7 +3,8 @@ package problem;
 import javax.media.opengl.GL2;
 import java.util.Random;
 
-public class Beam {
+public class Beam
+{
     Vector2 A;
     Vector2 B;
     Vector2 C;
@@ -28,17 +29,16 @@ public class Beam {
         gl.glEnd();
     }
 
-    public static Beam randomRectangle() {
+    public static Beam randomBeam() {
         Random r = new Random();
         double Ax = (double) r.nextInt(50) / 25 - 1;
         double Ay = (double) r.nextInt(50) / 25 - 1;
         double Bx = (double) r.nextInt(50) / 25 - 1;
         double By = (double) r.nextInt(50) / 25 - 1;
-        double r1 = (double) r.nextInt(50) / 25 - 1;
+        double k1 = (double) r.nextInt(50) / 25 - 1;
         double Cx = 0;
-        if (r1 > 0)  Cx = 1000;
-        if (r1 <= 0)  Cx = -1000;
-
+        if (k1<0) Cx = 100000;
+        else Cx = -100000;
         if (Ax == Bx) Ax = Bx + 0.01;
         if (Ay == By) Ay = By + 0.01;
         if (Ax == Cx) Cx = Ax + 0.01;
@@ -65,5 +65,3 @@ public class Beam {
         return f;
     }
 }
-
-
